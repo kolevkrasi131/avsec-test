@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Модул 2 - Тест от 20 въпроса (AVSEC ГД ГВА)</title>
+  <style>
+    :root {
+      --primary: #004b93;
+      --primary-dark: #003366;
+      --primary-light: #e6f0fa;
+      --success: #28a745;
+      --danger: #dc3545;
+      --bg: #f4f7fa;
+      --card-bg: #ffffff;
+      --text: #222222;
+      --border: #d0dbe5;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: 40px;
+    }
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      padding: 16px 14px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    header h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+    header p {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      margin-top: 3px;
+    }
+    .container {
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 14px;
+    }
+    .mode-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: white;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 14px;
+    }
+    .mode-toggle {
+      display: flex;
+      background: #e9ecef;
+      border-radius: 8px;
+      padding: 3px;
+    }
+    .mode-btn {
+      border: none;
+      background: transparent;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .mode-btn.active {
+      background: white;
+      color: var(--primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .score-badge {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .progress-wrap {
+      background: #e1e7ee;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .progress-bar {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.3s;
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: 14px;
+      padding: 18px 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      margin-bottom: 16px;
+    }
+    .tag {
+      display: inline-block;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .question-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #111;
+      line-height: 1.45;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .opt-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: #fdfdfd;
+      border: 1.5px solid #dce4ed;
+      padding: 12px 14px;
+      border-radius: 10px;
+      text-align: left;
+      font-size: 0.90rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      color: var(--text);
+      line-height: 1.4;
+    }
+    .opt-letter {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 26px;
+      height: 26px;
+      background: #eef3f8;
+      border-radius: 50%;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .opt-btn.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+    .opt-btn.correct {
+      border-color: var(--success) !important;
+      background: #e8f5e9 !important;
+      color: #155724 !important;
+    }
+    .opt-btn.correct .opt-letter {
+      background: var(--success);
+      color: white;
+    }
+    .opt-btn.wrong {
+      border-color: var(--danger) !important;
+      background: #ffebee !important;
+      color: #721c24 !important;
+    }
+    .opt-btn.wrong .opt-letter {
+      background: var(--danger);
+      color: white;
+    }
+    .explanation {
+      margin-top: 14px;
+      padding: 12px;
+      background: #f8f9fa;
+      border-left: 4px solid var(--primary);
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: #333;
+      display: none;
+      line-height: 1.45;
+    }
+    .nav-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .action-btn {
+      flex: 1;
+      padding: 13px;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-prev {
+      background: #e2e8f0;
+      color: #334155;
+    }
+    .btn-next {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-finish {
+      background: var(--success);
+      color: white;
+    }
+    .results-card {
+      display: none;
+      text-align: center;
+      padding: 24px 16px;
+    }
+    .score-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin: 16px auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: white;
+    }
+    .pass { background: var(--success); }
+    .fail { background: var(--danger); }
+    .score-label { font-size: 0.75rem; font-weight: normal; opacity: 0.9; }
+    .result-msg { font-size: 1.15rem; font-weight: 700; margin-bottom: 12px; }
+    .result-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .stat-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      padding: 12px;
+      border-radius: 10px;
+    }
+    .stat-num { font-size: 1.4rem; font-weight: 700; color: var(--primary); }
+    .stat-text { font-size: 0.8rem; color: #666; }
+    .btn-restart {
+      background: var(--primary);
+      color: white;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🛡️ Модул 2: Основно обучение</h1>
+  <p>Фокусиран изпитен тест (20 въпроса • Стил ГД ГВА)</p>
+</header>
+
+<div class="container">
+  <div class="mode-bar">
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="mode-learn" onclick="setMode('learn')">📖 Учебен</button>
+      <button class="mode-btn" id="mode-exam" onclick="setMode('exam')">⏱️ Изпитен</button>
+    </div>
+    <div class="score-badge" id="score-display">Въпрос 1/20</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progress-bar"></div>
+  </div>
+
+  <div class="card" id="quiz-card">
+    <span class="tag">Модул 2 • AVSEC</span>
+    <h2 class="question-title" id="q-text">Въпрос</h2>
+    <div class="options" id="options-container"></div>
+    <div class="explanation" id="q-explanation"></div>
+
+    <div class="nav-actions">
+      <button class="action-btn btn-prev" id="btn-prev" onclick="prevQuestion()" disabled>← Предишен</button>
+      <button class="action-btn btn-next" id="btn-next" onclick="nextQuestion()">Следващ →</button>
+    </div>
+  </div>
+
+  <div class="card results-card" id="results-card">
+    <h2>Резултати от теста</h2>
+    <div class="score-circle" id="score-circle">
+      <span id="score-percent">0%</span>
+      <span class="score-label">Резултат</span>
+    </div>
+    <div class="result-msg" id="result-msg"></div>
+    <p style="font-size:0.85rem; color:#666;">Праг за преминаване пред ГД ГВА: минимум 80% (16 от 20 верни отговора).</p>
+    
+    <div class="result-stats">
+      <div class="stat-box">
+        <div class="stat-num" id="stat-correct">0</div>
+        <div class="stat-text">Верни отговори</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="stat-wrong">0</div>
+        <div class="stat-text">Грешни отговори</div>
+      </div>
+    </div>
+
+    <button class="btn-restart" onclick="restartQuiz()">🔄 Реши теста отново</button>
+  </div>
+</div>
+
+<script>
+const activeQuestions = [{"id": 1, "module": "Модул 2", "q": "Какво представлява „Зона с ограничен достъп“ (ЗОРД / SRA) съгласно чл. 3 от Регламент (ЕО) № 300/2008?", "options": ["Всяка част от територията на летището, в която е въведен пропускателен режим с бариери за моторни превозни средства.", "Зона от въздушната страна на летището (Airside), в която достъпът се контролира строго и се прилагат проверки за сигурност на 100% от лицата, вещите и превозните средства преди допускане.", "Единствено пистата за излитане и кацане (ПИК) и пътеките за рулиране, където се движат самолети.", "Зоната за чекиране и издаване на бордни карти преди пунктовете за проверка за сигурност."], "correct": 1, "exp": "Регламент (ЕО) № 300/2008, чл. 3: ЗОРД е част от Airside с контролиран достъп и задължителна 100% проверка за сигурност."}, {"id": 2, "module": "Модул 2", "q": "Каква е точната легална дефиниция за „Контрол за сигурност“ (Security control) съгласно Регламент (ЕО) № 300/2008 и Анекс 17 на ИКАО?", "options": ["Извършване на задължителен технически преглед на двигателите на самолета преди всеки полет.", "Прилагане на средства и мерки, чрез които може да бъде предотвратено внасянето на оръжия, взривни вещества или други опасни устройства, предмети или вещества, които могат да бъдат използвани за извършване на акт на незаконна намеса.", "Проверка на спазването на работното време и трудовата дисциплина на служителите на летището.", "Проверка на теглото и размерите на ръчния багаж за съответствие с търговските изисквания на авиокомпанията."], "correct": 1, "exp": "Регламент 300/2008, чл. 3: Точната легална дефиниция за контрол за сигурност (Security control)."}, {"id": 3, "module": "Модул 2", "q": "Какво изисква принципът за „Основателна причина за достъп“ (Need-to-be / Legitimate reason) в ЗОРД?", "options": ["Притежаването на летищен пропуск само по себе си е достатъчно основание за влизане в ЗОРД по всяко време на денонощието.", "Лицето трябва да има конкретна служебна/оперативна задача (за служители), валиден полетен документ за деня (за пътници) или оторизирана инспекционна/опознавателна обиколка на летателното поле.", "Основателна причина се изисква единствено от външни посетители, но не и от редовните летищни служители.", "Основателна причина се удостоверява единствено с устно потвърждение от колега на същата смяна."], "correct": 1, "exp": "Регламент 2015/1998, т. 1.2: Притежаването на пропуск изисква задължителна оперативна необходимост (Need-to-be)."}, {"id": 4, "module": "Модул 2", "q": "Кои части от летището задължително се определят като „Критични части на ЗОРД“ (Critical Parts of SRA) съгласно т. 1.1.3 от Приложението на Регламент 2015/1998?", "options": ["Всички ресторанти и търговски обекти в обществената зона преди проверката за сигурност.", "Най-малко тези части от летището, през които преминават проверени заминаващи пътници и проверен регистриран багаж, както и зоните за сортиране и обработка на багажа.", "Само и единствено кабината за управление на въздушното движение (кулата РВД).", "Периметровата ограда и зоната около гориво-смазочния склад."], "correct": 1, "exp": "Регламент 2015/1998, т. 1.1.3: Критичните части обхващат зоните след скрининг, залите за заминаващи, сортирането на багажи и пероните."}, {"id": 5, "module": "Модул 2", "q": "Какви са задължителните действия при констатирано компрометиране на стерилността в критична част на ЗОРД (напр. смесване на непроверени пристигащи пътници със заминаващи)?", "options": ["Качването на пътници на борда на ВС продължава нормално, като пристигащите се извеждат дискретно.", "Незабавно се спира качването на пътници на всички ВС, зоната се евакуира напълно и се извършва цялостно претърсване за сигурност (Security sweep) преди повторно въвеждане на пътници.", "Извършва се случайна проверка на 5% от намиращите се в залата пътници.", "Изчаква се заминаването на планираните полети и проверката се прави след приключване на графика за деня."], "correct": 1, "exp": "Регламент 2015/1998, т. 1.1.3.3: При компрометиране на стерилността се спира бордингът, зоната се евакуира и се прави Security sweep."}, {"id": 6, "module": "Модул 2", "q": "Какъв максимален период на прекъсване на трудовата заетост или образование (gap) без документално удостоверяване се допуска при задълбочена проверка за надеждност (Enhanced Background Check)?", "options": ["До 60 последователни дни в рамките на последните 5 години.", "Не повече от 28 последователни дни (всяко прекъсване над 28 дни подлежи на задължително писмено изясняване и доказване).", "До 6 месеца, стига лицето да не е напускало пределите на Република България.", "Прекъсванията не се проверяват, ако лицето представи свидетелство за съдимост."], "correct": 1, "exp": "НПОССГВ / стандарти на ЕС: При Enhanced Background Check за 5 години всяко прекъсване над 28 дни подлежи на доказване."}, {"id": 7, "module": "Модул 2", "q": "Съгласно Допълнение 4-C към Регламент (ЕС) 2015/1998, кое от изброените е РАЗРЕШЕНО за пренасяне в ръчния багаж от пътник?", "options": ["Отвертка с дължина на металното тяло 7 см.", "Ножица с острие с дължина 5 см, измерена от центъра на оста (шарнира).", "Макетен нож с прибиращо се острие с дължина 3 см.", "Реплика на пистолет от олекотена пластмаса (детска играчка с реалистичен вид)."], "correct": 1, "exp": "Допълнение 4-C: Ножици с острие до 6 см от шарнира са разрешени. Инструменти над 6 см и реплики са забранени."}, {"id": 8, "module": "Модул 2", "q": "Какъв е точният регламентиран режим за пренасяне на течни лекарствени средства (LAGs), необходими за времето на пътуването?", "options": ["Допускат се единствено в опаковки до 100 ml, поставени в 1-литров прозрачен плик.", "Освободени са от лимита от 100 ml и изискването за 1-литров плик, но подлежат на задължително деклариране и отделна проверка за сигурност (с оборудване LEDS).", "Разрешени са без никаква проверка за сигурност, ако върху опаковката има етикет от аптека.", "Течни лекарства са абсолютно забранени за кабината и се превозват само в багажното отделение."], "correct": 1, "exp": "Регламент 2015/1998, т. 4.1.2: Необходимите течни медикаменти са освободени от лимита от 100 ml, но преминават проверка с LEDS."}, {"id": 9, "module": "Модул 2", "q": "В концепцията за Самоделно взривно устройство (СВУ / IED), каква е специфичната функция на детонатора (Initiator)?", "options": ["Осигурява електрическото захранване на цялата верига.", "Представлява чувствителен първичен взривен заряд, който при нагряване, искра или удар създава детонационна вълна, необходима за взривяване на основния вторичен заряд.", "Служи за механично задържане на бойната игла в затегнато положение.", "Представлява херметичен метален корпус, усилващ фугасното действие."], "correct": 1, "exp": "Теория на IED (PIES): Детонаторът е първичният инициатор, генериращ детонационна вълна за взривяване на основния бризантен заряд."}, {"id": 10, "module": "Модул 2", "q": "Кое от следните вещества спада към категорията на ПЪРВИЧНИТЕ взривни вещества (инициатори), отличаващи се с екстремна нестабилност и чувствителност към искра и триене?", "options": ["Тротил (TNT).", "Триацетон трипероксид (TATP).", "Хексоген (RDX).", "Пластичен експлозив C-4."], "correct": 1, "exp": "Химия на взривните вещества: TATP е първично взривно вещество с висока чувствителност; TNT и RDX са вторични бризантни експлозиви."}, {"id": 11, "module": "Модул 2", "q": "Как се превозват резервни литиево-йонни батерии и външни батерии (Power Banks) с капацитет между 100 Wh и 160 Wh?", "options": ["Забранени са за превоз на борда на пътнически самолети под каквато и да е форма.", "Разрешени са САМО в ръчния багаж (до 2 броя на пътник) с предварително съгласуване/одобрение от авиокомпанията; в чекирания багаж са абсолютно забранени.", "Разрешени са само в регистрирания багаж, стига куфарът да е с твърди стени.", "Разрешени са без ограничение в бройката и без уведомление както в ръчния, така и в чекирания багаж."], "correct": 1, "exp": "DGR / AVSEC правила: Батерии 100–160 Wh се допускат само в ръчния багаж (макс. 2 бр.) след съгласуване с авиокомпанията."}, {"id": 12, "module": "Модул 2", "q": "При какви условия законно притежавано огнестрелно оръжие на пътник може да бъде транспортирано с пътнически полет?", "options": ["В ръчния багаж на пътника, ако патроните са свалени от пълнителя.", "В пилотската кабина под личния надзор на капитана.", "Единствено в регистрирания багаж (в багажното отделение), напълно незаредено, в заключен твърд куфар, след предварителна декларация към превозвача и проверка от Гранична полиция / МВР.", "Оръжие никога не може да бъде превозвано с граждански въздушен транспорт."], "correct": 2, "exp": "Регламент 2015/1998, т. 4.1.3: Оръжие се превозва само в багажното отделение, незаредено, в заключен куфар с разрешение на превозвача и МВР."}, {"id": 13, "module": "Модул 2", "q": "Как трябва да реагира операторът на рентгеново оборудване при наличие на непроницаема тъмна зона (Shielded / dark area) в сканирания багаж, през която лъчите не преминават?", "options": ["Пропуска багажа, ако останалото съдържание изглежда нормално.", "Задължително насочва багажа за физическа проверка (ръчно отваряне и претърсване) за изясняване на непроницаемия предмет.", "Сканира багажа повторно с намалена яркост на монитора, без да отваря куфара.", "Изисква от пътника устна декларация какво има вътре и го освобождава."], "correct": 1, "exp": "Рентгенов скрининг: Непроницаемите за рентгеновите лъчи тъмни зони са потенциално укритие за IED и налагат задължително отваряне."}, {"id": 14, "module": "Модул 2", "q": "Кой цвят на екрана на двуенергиен рентгенов апарат обозначава материали с нисък атомен номер (органични съединения, взривни вещества, пластмаси, наркотици)?", "options": ["Светлосин или тъмносин цвят.", "Оранжев до кафяв цвят.", "Яркозелен цвят.", "Бял цвят."], "correct": 1, "exp": "Физика на рентгеновите лъчи: Ниският атомен номер (Zeff 6–9) съответства на органични вещества и експлозиви и се оцветява в оранжево/кафяво."}, {"id": 15, "module": "Модул 2", "q": "Какво представлява „Справедливата култура“ (Just Culture) като елемент на културата на сигурността?", "options": ["Пълна амнистия за всякакви нарушения на правилника за сигурност, независимо от вината.", "Среда на доверие, насърчаваща служителите открито да докладват грешки и инциденти, при която неумишлени грешки не се наказват, но не се толерират умишлени нарушения или груба небрежност.", "Право на служителя сам да определя кои мерки за сигурност да прилага по време на смяната си.", "Задължение за налагане на финансови глоби на всеки служител, допуснал забавяне на полет."], "correct": 1, "exp": "Security Culture: Справедливата култура разделя неумишлените човешки грешки от умишлените нарушения и саботаж."}, {"id": 16, "module": "Модул 2", "q": "Защо вътрешните заплахи (Insider Threats) се класифицират като критичен риск за сигурността на гражданското въздухоплаване?", "options": ["Защото вътрешните лица не притежават служебни карти и лесно се сливат с тълпата.", "Защото лицата с разрешен достъп познават процедурите, разположението на камерите и слабите места на пропускателния режим и могат да заобиколят проверките.", "Защото вътрешните заплахи идват единствено от пътници, които летят често.", "Защото срещу вътрешните лица законодателството не предвижда наказателна отговорност."], "correct": 1, "exp": "Insider Threat концепция: Вътрешните лица притежават легитимен достъп, познават графика на патрулите и слабите зони в защитата."}, {"id": 17, "module": "Модул 2", "q": "Кой международен акт регламентира юрисдикцията на държавата на регистрация на въздухоплавателното средство при престъпления, извършени на борда по време на полет?", "options": ["Токийската конвенция от 1963 г.", "Хагската конвенция от 1970 г.", "Монреалската конвенция от 1971 г.", "Шенгенското споразумение от 1985 г."], "correct": 0, "exp": "Международно авиационно право: Токийската конвенция от 1963 г. урежда престъпленията на борда и юрисдикцията на държавата на регистрация на ВС."}, {"id": 18, "module": "Модул 2", "q": "Какъв е режимът за дипломатическата поща (Diplomatic pouch) съгласно Виенската конвенция за дипломатическите отношения?", "options": ["Подлежи на задължително отваряне и ръчно претърсване на всяко летище.", "Не подлежи на отваряне или задържане; неинвазивен рентгенов преглед може да се изиска по национални правила, но физическо отваряне е забранено.", "Проверява се точно по същия начин, както обикновен търговски товар.", "Предава се директно на капитана без никакви документи."], "correct": 1, "exp": "Виенска конвенция, чл. 27: Дипломатическата поща не подлежи на отваряне или задържане от контролните органи на летището."}, {"id": 19, "module": "Модул 2", "q": "Какво означава съкращението DEPA в класификацията на специалните категории пътници?", "options": ["Пътник, на когото е отказано влизане в страната поради липса на виза (Inadmissible).", "Депортирано лице, придружавано от полицейски ескорт (Deportee Accompanied).", "Дипломатически куриер с неприкосновена пратка.", "Непридружено малолетно дете по време на полет."], "correct": 1, "exp": "Авиационна терминология: DEPA (Deportee Accompanied) е депортирано лице, конвоирано от служебен ескорт."}, {"id": 20, "module": "Модул 2", "q": "При установяване на врата, водеща от обществената зона към ЗОРД, която е оставена открехната или заключващият й механизъм е дефектирал, какво е задължението на служителя?", "options": ["Да продължи по маршрута си и да уведоми колегите при следващата почивка.", "Незабавно да затвори вратата, да остане на място като физически пост/охрана и веднага да сигнализира службата за сигурност/ОДЦ за неизправността.", "Да залепи лист с предупредителен надпис и да се оттегли.", "Да изключи алармата на бравата, за да не смущава пътниците."], "correct": 1, "exp": "Стандартни оперативни процедури (SOP): Повредена врата към ЗОРД е директен риск от пробив; охранява се на място до пристигане на патрул/ремонт."}];
+const letters = ['А', 'Б', 'В', 'Г'];
+let currentMode = 'learn';
+let currentIndex = 0;
+let userAnswers = {};
+
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('mode-learn').classList.toggle('active', mode === 'learn');
+  document.getElementById('mode-exam').classList.toggle('active', mode === 'exam');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  if (currentIndex >= activeQuestions.length) {
+    showResults();
+    return;
+  }
+
+  const q = activeQuestions[currentIndex];
+  document.getElementById('q-text').textContent = (currentIndex + 1) + '. ' + q.q;
+  document.getElementById('score-display').textContent = 'Въпрос ' + (currentIndex + 1) + '/' + activeQuestions.length;
+  document.getElementById('progress-bar').style.width = (((currentIndex + 1) / activeQuestions.length) * 100) + '%';
+  document.getElementById('btn-prev').disabled = (currentIndex === 0);
+
+  const isLast = (currentIndex === activeQuestions.length - 1);
+  const nextBtn = document.getElementById('btn-next');
+  if (isLast) {
+    nextBtn.textContent = 'Предай изпита ✔';
+    nextBtn.className = 'action-btn btn-finish';
+  } else {
+    nextBtn.textContent = 'Следващ →';
+    nextBtn.className = 'action-btn btn-next';
+  }
+
+  const optionsContainer = document.getElementById('options-container');
+  optionsContainer.innerHTML = '';
+
+  const explanationBox = document.getElementById('q-explanation');
+  const answered = userAnswers.hasOwnProperty(q.id);
+
+  q.options.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = '<span class="opt-letter">' + letters[idx] + '</span> <span>' + opt + '</span>';
+
+    if (answered) {
+      const userSelected = userAnswers[q.id];
+      if (currentMode === 'learn') {
+        if (idx === q.correct) {
+          btn.classList.add('correct');
+        } else if (idx === userSelected) {
+          btn.classList.add('wrong');
+        }
+      } else {
+        if (idx === userSelected) {
+          btn.classList.add('selected');
+        }
+      }
+    }
+
+    btn.onclick = () => selectOption(idx);
+    optionsContainer.appendChild(btn);
+  });
+
+  if (answered && currentMode === 'learn') {
+    explanationBox.style.display = 'block';
+    const isCorrect = userAnswers[q.id] === q.correct;
+    explanationBox.innerHTML = (isCorrect ? '<strong>✅ Верен отговор!</strong><br>' : '<strong>❌ Грешен отговор! Верен е: ' + letters[q.correct] + '</strong><br>') + q.exp;
+  } else {
+    explanationBox.style.display = 'none';
+  }
+}
+
+function selectOption(index) {
+  const q = activeQuestions[currentIndex];
+  userAnswers[q.id] = index;
+  renderQuestion();
+}
+
+function nextQuestion() {
+  if (currentIndex < activeQuestions.length - 1) {
+    currentIndex++;
+    renderQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function prevQuestion() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    renderQuestion();
+  }
+}
+
+function showResults() {
+  document.getElementById('quiz-card').style.display = 'none';
+  const resultsCard = document.getElementById('results-card');
+  resultsCard.style.display = 'block';
+
+  let correctCount = 0;
+  activeQuestions.forEach(q => {
+    if (userAnswers[q.id] === q.correct) correctCount++;
+  });
+
+  const total = activeQuestions.length;
+  const percent = Math.round((correctCount / total) * 100);
+  const passed = percent >= 80;
+
+  const circle = document.getElementById('score-circle');
+  circle.className = 'score-circle ' + (passed ? 'pass' : 'fail');
+  document.getElementById('score-percent').textContent = percent + '%';
+
+  const msg = document.getElementById('result-msg');
+  if (passed) {
+    msg.innerHTML = '🎉 Честито! Успешно положен тест по Модул 2!';
+    msg.style.color = 'var(--success)';
+  } else {
+    msg.innerHTML = '⚠️ Резултатът е под 80% (необходими са минимум 16 верни отговора).';
+    msg.style.color = 'var(--danger)';
+  }
+
+  document.getElementById('stat-correct').textContent = correctCount + '/' + total;
+  document.getElementById('stat-wrong').textContent = (total - correctCount) + '/' + total;
+}
+
+function restartQuiz() {
+  currentIndex = 0;
+  userAnswers = {};
+  document.getElementById('results-card').style.display = 'none';
+  document.getElementById('quiz-card').style.display = 'block';
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+</body>
+</html>
