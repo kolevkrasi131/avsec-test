@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Модул 7 - Тест от 20 въпроса (AVSEC ГД ГВА)</title>
+  <style>
+    :root {
+      --primary: #004b93;
+      --primary-dark: #003366;
+      --primary-light: #e6f0fa;
+      --success: #28a745;
+      --danger: #dc3545;
+      --bg: #f4f7fa;
+      --card-bg: #ffffff;
+      --text: #222222;
+      --border: #d0dbe5;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: 40px;
+    }
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      padding: 16px 14px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    header h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+    header p {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      margin-top: 3px;
+    }
+    .container {
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 14px;
+    }
+    .mode-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: white;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 14px;
+    }
+    .mode-toggle {
+      display: flex;
+      background: #e9ecef;
+      border-radius: 8px;
+      padding: 3px;
+    }
+    .mode-btn {
+      border: none;
+      background: transparent;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .mode-btn.active {
+      background: white;
+      color: var(--primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .score-badge {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .progress-wrap {
+      background: #e1e7ee;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .progress-bar {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.3s;
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: 14px;
+      padding: 18px 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      margin-bottom: 16px;
+    }
+    .tag {
+      display: inline-block;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .question-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #111;
+      line-height: 1.45;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .opt-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: #fdfdfd;
+      border: 1.5px solid #dce4ed;
+      padding: 12px 14px;
+      border-radius: 10px;
+      text-align: left;
+      font-size: 0.90rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      color: var(--text);
+      line-height: 1.4;
+    }
+    .opt-letter {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 26px;
+      height: 26px;
+      background: #eef3f8;
+      border-radius: 50%;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .opt-btn.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+    .opt-btn.correct {
+      border-color: var(--success) !important;
+      background: #e8f5e9 !important;
+      color: #155724 !important;
+    }
+    .opt-btn.correct .opt-letter {
+      background: var(--success);
+      color: white;
+    }
+    .opt-btn.wrong {
+      border-color: var(--danger) !important;
+      background: #ffebee !important;
+      color: #721c24 !important;
+    }
+    .opt-btn.wrong .opt-letter {
+      background: var(--danger);
+      color: white;
+    }
+    .explanation {
+      margin-top: 14px;
+      padding: 12px;
+      background: #f8f9fa;
+      border-left: 4px solid var(--primary);
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: #333;
+      display: none;
+      line-height: 1.45;
+    }
+    .nav-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .action-btn {
+      flex: 1;
+      padding: 13px;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-prev {
+      background: #e2e8f0;
+      color: #334155;
+    }
+    .btn-next {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-finish {
+      background: var(--success);
+      color: white;
+    }
+    .results-card {
+      display: none;
+      text-align: center;
+      padding: 24px 16px;
+    }
+    .score-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin: 16px auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: white;
+    }
+    .pass { background: var(--success); }
+    .fail { background: var(--danger); }
+    .score-label { font-size: 0.75rem; font-weight: normal; opacity: 0.9; }
+    .result-msg { font-size: 1.15rem; font-weight: 700; margin-bottom: 12px; }
+    .result-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .stat-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      padding: 12px;
+      border-radius: 10px;
+    }
+    .stat-num { font-size: 1.4rem; font-weight: 700; color: var(--primary); }
+    .stat-text { font-size: 0.8rem; color: #666; }
+    .btn-restart {
+      background: var(--primary);
+      color: white;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🛡️ Модул 7: Контрол на достъпа</h1>
+  <p>Фокусиран изпитен тест (20 въпроса • Стил ГД ГВА)</p>
+</header>
+
+<div class="container">
+  <div class="mode-bar">
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="mode-learn" onclick="setMode('learn')">📖 Учебен</button>
+      <button class="mode-btn" id="mode-exam" onclick="setMode('exam')">⏱️ Изпитен</button>
+    </div>
+    <div class="score-badge" id="score-display">Въпрос 1/20</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progress-bar"></div>
+  </div>
+
+  <div class="card" id="quiz-card">
+    <span class="tag">Модул 7 • Достъп и патрул</span>
+    <h2 class="question-title" id="q-text">Въпрос</h2>
+    <div class="options" id="options-container"></div>
+    <div class="explanation" id="q-explanation"></div>
+
+    <div class="nav-actions">
+      <button class="action-btn btn-prev" id="btn-prev" onclick="prevQuestion()" disabled>← Предишен</button>
+      <button class="action-btn btn-next" id="btn-next" onclick="nextQuestion()">Следващ →</button>
+    </div>
+  </div>
+
+  <div class="card results-card" id="results-card">
+    <h2>Резултати от теста</h2>
+    <div class="score-circle" id="score-circle">
+      <span id="score-percent">0%</span>
+      <span class="score-label">Резултат</span>
+    </div>
+    <div class="result-msg" id="result-msg"></div>
+    <p style="font-size:0.85rem; color:#666;">Праг за преминаване пред ГД ГВА: минимум 80% (16 от 20 верни отговора).</p>
+    
+    <div class="result-stats">
+      <div class="stat-box">
+        <div class="stat-num" id="stat-correct">0</div>
+        <div class="stat-text">Верни отговори</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="stat-wrong">0</div>
+        <div class="stat-text">Грешни отговори</div>
+      </div>
+    </div>
+
+    <button class="btn-restart" onclick="restartQuiz()">🔄 Реши теста отново</button>
+  </div>
+</div>
+
+<script>
+const activeQuestions = [{"id": 1, "module": "Модул 7", "q": "В електронните системи за контрол на достъпа (ACS), каква е специфичната функция на защитния механизъм „Anti-passback“?", "options": ["Автоматично форматира чипа на картата, ако служителят закъснее за работната си смяна.", "Забранява повторно използване на същата карта за вход, ако преди това в системата не е регистрирано валидно излизане на притежателя през изходен четец.", "Генерира аларма към полицията, ако служител премине през врата със скорост над 5 км/ч.", "Позволява с една карта едновременно да преминат до петима служители от една и съща смяна."], "correct": 1, "exp": "Anti-passback предотвратява преотстъпването на картата през турникета или вратата на второ лице, като блокира втори вход без предходен изход."}, {"id": 2, "module": "Модул 7", "q": "Каква е съществената оперативна разлика между термините „Tailgating“ и „Piggybacking“ при нерегламентирано преминаване през врати за сигурност?", "options": ["Tailgating се извършва с моторно превозно средство, а Piggybacking е преминаване пеша.", "При Tailgating нарушителят се промъква плътно зад оторизирания служител без неговото знание или съгласие, докато при Piggybacking оторизираният служител съзнателно задържа вратата или съдейства на лицето без карта.", "Няма никаква разлика, термините са пълни синоними за повредена електронна брава.", "Tailgating е разрешен за служители в униформа, докато Piggybacking е забранен."], "correct": 1, "exp": "Tailgating: промъкване без съгласие/знание на титуляря. Piggybacking: преминаване със съгласието/любезното съучастие на колегата. И двете са тежки нарушения!"}, {"id": 3, "module": "Модул 7", "q": "В системата за мониторинг на врати към ЗОРД, каква е разликата между алармите DHO (Door Held Open) и DFO (Door Forced Open)?", "options": ["DHO се активира при пожар, а DFO - при спиране на електрозахранването.", "DHO се генерира, когато легитимно отворена с карта врата остане отворена над допустимия интервал, докато DFO се задейства при физическо отваряне на вратата без чекиране на валидна карта.", "DHO е аларма за взлом с лост, а DFO е аларма за забравена отворена врата.", "DHO се подава към гранична полиция, а DFO - само към чистачите на терминала."], "correct": 1, "exp": "DHO (Door Held Open): вратата е държана отворена твърде дълго. DFO (Door Forced Open): вратата е насилствено отворена без карта (потенциален пробив)."}, {"id": 4, "module": "Модул 7", "q": "Какво представлява „Свободната зона“ (Clear Zone) от двете страни на периметровата охранителна ограда на летището и какво е основното й изискване?", "options": ["Зона за свободно паркиране на лични автомобили на служителите покрай оградата.", "Ивица (обичайно поне 3 метра от вътрешната и външната страна), напълно разчистена от дървета, храсти, постройки, складирани материали или превозни средства, осигуряваща чиста видимост и премахваща опори за прескачане.", "Зона, засадена с гъсти бодливи храсти за естествено прикритие на патрулите.", "Зона, оборудвана единствено със соларни панели за електрозахранване на оградата."], "correct": 1, "exp": "Clear zone елиминира укритията и естествените опори (стълбове, дървета, палети), улесняващи прескачането на периметровата ограда."}, {"id": 5, "module": "Модул 7", "q": "Защо физическото патрулиране на Летищната служба за сигурност (ЛСС) в ЗОРД и по периметъра задължително трябва да следва случаен график (Random Patrolling)?", "options": ["Защото летищният оператор не може да планира графика на смените.", "За да се предотврати възможността потенциални нарушители или вътрешни лица да проучат цикличността на обходите и да подготвят пробив в интервал без охрана.", "За да не се износват гумите на служебните патрулни автомобили по един и същи маршрут.", "За да могат служителите да патрулират само когато метеорологичните условия са благоприятни."], "correct": 1, "exp": "Непредсказуемият патрул лишава нарушителите от възможност да засекат интервал на отсъствие на охраната за извършване на нерегламентирано проникване."}, {"id": 6, "module": "Модул 7", "q": "Какво представлява периметровата система PIDS (Perimeter Intrusion Detection System)?", "options": ["Автоматизирана радиостанция за комуникация с пилотите в зоната на летището.", "Комплекс от електронни сензори (сензорни кабели, инфрачервени бариери, микровълнови датчици), които незабавно засичат и локализират опит за срязване, катерене или преминаване на оградата.", "Система от високоговорители за възпроизвеждане на предупредителни съобщения на границата.", "Датчици за измерване на налягането в резервоарите на горивното стопанство."], "correct": 1, "exp": "PIDS осигурява ранна електронна детекция при всяко физическо въздействие върху периметъра още преди навлизане в дълбочина."}, {"id": 7, "module": "Модул 7", "q": "Какви са първите и неотложни действия на патрула по сигурност при констатиране на срязване на мрежата или подкоп под периметровата ограда?", "options": ["Огражда мястото с клонки, отбелязва го в бележника си и продължава обиколката.", "Незабавно докладва на оперативния дежурен център/полицията, блокира пробива с физически пост, обследва района за укрили се нарушители и организира охрана до приключване на ремонта.", "Опитва се сам да завари оградата и не докладва, за да не създава излишна паника.", "Изчаква смяната си и предава проблема на следващия дежурен колега."], "correct": 1, "exp": "Пробивът в оградата е непосредствена заплаха от компрометиране на ЗОРД: изисква моментален физически пост, тревога и претърсване на сектора."}, {"id": 8, "module": "Модул 7", "q": "Какви са законовите правомощия на служителя от Летищната служба за сигурност (ЛСС) при установяване на непознато лице в ЗОРД без пропуск, което отказва да се легитимира?", "options": ["Няма никакви правомощия и може само да го помоли учтиво да си тръгне.", "Има правомощия да спре и задържи лицето на място с цел установяване на самоличност и предотвратяване на вреди, като незабавно уведоми органите на МВР/Гранична полиция за предаването му.", "Има право да му състави Акт за установяване на административно нарушение (АУАН) и да му наложи глоба в брой.", "Има право да проведе полицейски разпит и да го задържи в килия за 24 часа."], "correct": 1, "exp": "Служителят на ЛСС може да спре и задържи нарушителя на място до пристигане на полицейските органи. АУАН по ЗГВ се съставя от оправомощени инспектори на ГВА/МВР."}, {"id": 9, "module": "Модул 7", "q": "На външен подизпълнител е разрешено да внесе инструменти (ножове, отвертки) в ЗОРД за извършване на ремонт след преглед на КПП по опис. Имат ли право служителите от ЛСС на проверка на място и как трябва да се съхраняват те?", "options": ["ЛСС няма право на проверки след входа; инструментите могат да се оставят свободно на пода до самолета.", "Служителите от ЛСС имат пълно право на внезапен контрол на място; когато с инструментите не се работи активно, те задължително трябва да са изолирани и заключени в защитено помещение/шкаф.", "Инструментите могат да се проверяват само в присъствието на съдия-изпълнител.", "След влизане в ЗОРД инструментите задължително се унищожават в края на деня."], "correct": 1, "exp": "Службата за сигурност осъществява непрекъснат контрол в ЗОРД; неизползваните инструменти задължително се държат под ключ, за да няма неоторизиран достъп."}, {"id": 10, "module": "Модул 7", "q": "Какъв е контролът при пропускане на технически персонал с куфари с инструменти през контролно-пропускателен пункт към ЗОРД?", "options": ["Инструментите не се регистрират, ако техникът покаже диплома за инженер.", "Всички инструменти подлежат на 100% проверка за сигурност, записват се детайлно в специален дневник (Tool Register) на КПП и задължително се сверяват и преброяват при напускане на зоната.", "Инструментите се пропускат само ако работникът остави паричен депозит на бариерата.", "Проверява се само теглото на куфара, без да се отваря."], "correct": 1, "exp": "Регистърът на инструменти (Tool register) гарантира, че нито един опасен предмет няма да бъде оставен или забравен в защитената зона (риск от оръжие или FOD)."}, {"id": 11, "module": "Модул 7", "q": "Какви задължения има служителят, определен за персонален придружител (ескорт) на лица с временни пропуски с придружител в критична част на ЗОРД?", "options": ["Да ги придружи до работната площадка сутринта и да ги потърси отново в края на работната смяна.", "Да поддържа постоянен непрекъснат визуален контакт и пълен надзор върху действията на лицата през цялото време на престоя им в ЗОРД.", "Да изчака придружаваните работници в най-близкото заведение на терминала.", "Да носи личния си автомобил като преграда пред работниците."], "correct": 1, "exp": "Придружителят носи лична отговорност и няма право да прекъсва директния зрителен надзор върху придружаваните лица в защитената зона нито за момент."}, {"id": 12, "module": "Модул 7", "q": "Как се гарантира, че евакуационните аварийни изходи от терминала към перона отговарят едновременно на изискванията за пожарна безопасност и сигурност?", "options": ["Вратите се заключват постоянно с механичен секретен ключ, намиращ се у управителя.", "Снабдени са с електромагнитни брави и антипаник лостове, интегрирани с пожароизвестителната система: при пожарен сигнал се отключват автоматично, а при ръчно отваряне без пожар активират сирена и видеонаблюдение.", "Вратите се оставят широко отворени през целия ден.", "Вратите се зазиждат с тухли, за да няма неразрешен достъп."], "correct": 1, "exp": "Аварийните изходи осигуряват свободно напускане при пожар, но всяко тяхно нерегламентирано отваряне задейства моментална аларма за пробив в сигурността."}, {"id": 13, "module": "Модул 7", "q": "Какъв е законовият минимален срок за съхранение на записите от системата за видеонаблюдение (CCTV) на летището съгласно авиационните стандарти?", "options": ["Записите се изтриват на всеки 24 часа за пестене на дисково пространство.", "Обичайно най-малко 30 дни в защитена среда с ограничен достъп и предоставяне само по официално разпореждане на компетентните органи.", "Записите се съхраняват точно 1 година на публичен интернет сървър.", "Системите за видеонаблюдение на летището не правят записи, а само предават на живо."], "correct": 1, "exp": "Записите се пазят най-малко 30 дни в защитени сървъри за нуждите на разследване на инциденти, при спазване на правилата за защита на личните данни."}, {"id": 14, "module": "Модул 7", "q": "При наблюдение на CCTV операторът забелязва неизвестно безпилотно летателно средство (дрон / БЛА), летящо над полосата за излитане и кацане (ПИК). Какво е първото действие?", "options": ["Операторът отива на пистата и се опитва да хвърли предмет по дрона, за да го свали.", "Незабавно уведомява кулата за контрол на въздушното движение (ДП РВД) за моментално преустановяване на полетите и алармира органите на МВР за откриване на оператора.", "Изчаква самолетите да кацнат и чак тогава информира началника си.", "Насочва прожекторите към дрона, за да му помогне да се приземи."], "correct": 1, "exp": "Дрон около ПИК е смъртоносна опасност за въздухоплаването: първото действие е моментален сигнал към РВД за спиране на полетите и към МВР."}, {"id": 15, "module": "Модул 7", "q": "Какво следва да предприеме ескортиращият служител, ако внезапно загуби визуален контакт с придружаваното от него лице в ЗОРД (лицето се е отдалечило и е изчезнало от поглед)?", "options": ["Продължава обиколката си сам и изчаква лицето да се появи на изхода в края на деня.", "Незабавно прекратява дейностите, алармира оперативния дежурен център/службата за сигурност за обявяване на инцидент и започване на локално издирване и блокиране на зоната.", "Тръгва да го търси пеша, без да уведомява никого, за да не му се карат началниците.", "Отива да пие кафе и звъни на личния му телефон."], "correct": 1, "exp": "Загубата на визуален контрол над придружавано лице в ЗОРД е инцидент по сигурността и налага незабавна тревога и блокиране на периметъра."}, {"id": 16, "module": "Модул 7", "q": "Какви са физическите стандарти на ИКАО Анекс 17 и европейските норми за височината на периметровата охранителна ограда на международно летище?", "options": ["Минимум 1.00 метър обикновена телена мрежа.", "Минимум 2.44 метра (8 фута) височина, надградена отгоре с бодлива/режеща тел тип Concertina под ъгъл 45 градуса навън.", "Минимум 6.00 метра плътна стоманобетонна стена без врати.", "Височината се определя произволно от фирмата, монтирала оградата."], "correct": 1, "exp": "Стандартната височина е минимум 2.44 м с конзола от бодлива тел под ъгъл 45°, затрудняваща или предотвратяваща бързо преодоляване."}, {"id": 17, "module": "Модул 7", "q": "Какво означават секторните буквени или цветови кодове върху постоянния летищен пропуск (AIC)?", "options": ["Определят размера на трудовото възнаграждение и категорията труд на служителя.", "Обозначават конкретните зони и сектори от ЗОРД (напр. Т - Терминал, R - Перон/Ramp, B - Багажни сектори, A - Летателно поле), до които лицето има право на достъп съгласно служебната си необходимост.", "Показват на коя авиокомпания служителят е най-голям фен.", "Определят терминала, от който служителят може да си поръчва безплатен обяд."], "correct": 1, "exp": "Секторните кодове върху пропуска ограничават служителя единствено до тези сектори, в които има доказана оперативна необходимост (Need-to-be)."}, {"id": 18, "module": "Модул 7", "q": "Какво е задължението на всяко лице, притежаващо летищен идентификационен пропуск (AIC), по отношение на носенето му по време на престой в ЗОРД?", "options": ["Да го държи прибрано в портфейла или раницата си и да го вади само при поискване от полицията.", "Да го носи на видно място върху горната част на облеклото (на височината на гърдите) през цялото време на пребиваване в зоната.", "Да носи картата закачена на колана на панталона под якето.", "Пропуск се носи само при влизане и излизане през КПП, а вътре на перона не е нужен."], "correct": 1, "exp": "Пропускът задължително се носи на видно място на гърдите през цялото време в ЗОРД за незабавна визуална идентификация."}, {"id": 19, "module": "Модул 7", "q": "Какво представлява процедурата „Предизвикателство“ (Challenge procedure) в контекста на пропускателния режим в ЗОРД?", "options": ["Физическо състезание по бягане с препятствия между служителите от отделните смени.", "Правото и задължението на всеки служител да спре и изиска идентификация от непознато лице в ЗОРД без видим пропуск, и при отказ незабавно да уведоми дежурния център/полицията.", "Процедура за оспорване на годишната оценка на работното място пред ГД ГВА.", "Проверка на годността на металотърсачите преди започване на смяна."], "correct": 1, "exp": "Challenge procedure задължава всеки служител да прояви активна бдителност и да спре всяко лице в зоната, което не носи видим идентификационен знак."}, {"id": 20, "module": "Модул 7", "q": "Какви елементи за сигурност върху постоянната летищна идентификационна карта (AIC) трябва да проверява служителят за откриване на подправяне или фалшификация?", "options": ["Само дали снимката е цветна.", "Срок на валидност, холограмни защитни знаци, съответствие на снимката с лицето, интегритет на ламината (липса на следи от разлепване/подмяна) и съответствие на секторния код.", "Дали картата издава звук при почукване по масата.", "Дали картата се огъва лесно на две."], "correct": 1, "exp": "Проверката на пропуск обхваща цялостния контрол: срок, холограма, съответствие на лицето със снимката, липса на манипулации и разрешени сектори."}];
+const letters = ['А', 'Б', 'В', 'Г'];
+let currentMode = 'learn';
+let currentIndex = 0;
+let userAnswers = {};
+
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('mode-learn').classList.toggle('active', mode === 'learn');
+  document.getElementById('mode-exam').classList.toggle('active', mode === 'exam');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  if (currentIndex >= activeQuestions.length) {
+    showResults();
+    return;
+  }
+
+  const q = activeQuestions[currentIndex];
+  document.getElementById('q-text').textContent = (currentIndex + 1) + '. ' + q.q;
+  document.getElementById('score-display').textContent = 'Въпрос ' + (currentIndex + 1) + '/' + activeQuestions.length;
+  document.getElementById('progress-bar').style.width = (((currentIndex + 1) / activeQuestions.length) * 100) + '%';
+  document.getElementById('btn-prev').disabled = (currentIndex === 0);
+
+  const isLast = (currentIndex === activeQuestions.length - 1);
+  const nextBtn = document.getElementById('btn-next');
+  if (isLast) {
+    nextBtn.textContent = 'Предай изпита ✔';
+    nextBtn.className = 'action-btn btn-finish';
+  } else {
+    nextBtn.textContent = 'Следващ →';
+    nextBtn.className = 'action-btn btn-next';
+  }
+
+  const optionsContainer = document.getElementById('options-container');
+  optionsContainer.innerHTML = '';
+
+  const explanationBox = document.getElementById('q-explanation');
+  const answered = userAnswers.hasOwnProperty(q.id);
+
+  q.options.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = '<span class="opt-letter">' + letters[idx] + '</span> <span>' + opt + '</span>';
+
+    if (answered) {
+      const userSelected = userAnswers[q.id];
+      if (currentMode === 'learn') {
+        if (idx === q.correct) {
+          btn.classList.add('correct');
+        } else if (idx === userSelected) {
+          btn.classList.add('wrong');
+        }
+      } else {
+        if (idx === userSelected) {
+          btn.classList.add('selected');
+        }
+      }
+    }
+
+    btn.onclick = () => selectOption(idx);
+    optionsContainer.appendChild(btn);
+  });
+
+  if (answered && currentMode === 'learn') {
+    explanationBox.style.display = 'block';
+    const isCorrect = userAnswers[q.id] === q.correct;
+    explanationBox.innerHTML = (isCorrect ? '<strong>✅ Верен отговор!</strong><br>' : '<strong>❌ Грешен отговор! Верен е: ' + letters[q.correct] + '</strong><br>') + q.exp;
+  } else {
+    explanationBox.style.display = 'none';
+  }
+}
+
+function selectOption(index) {
+  const q = activeQuestions[currentIndex];
+  userAnswers[q.id] = index;
+  renderQuestion();
+}
+
+function nextQuestion() {
+  if (currentIndex < activeQuestions.length - 1) {
+    currentIndex++;
+    renderQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function prevQuestion() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    renderQuestion();
+  }
+}
+
+function showResults() {
+  document.getElementById('quiz-card').style.display = 'none';
+  const resultsCard = document.getElementById('results-card');
+  resultsCard.style.display = 'block';
+
+  let correctCount = 0;
+  activeQuestions.forEach(q => {
+    if (userAnswers[q.id] === q.correct) correctCount++;
+  });
+
+  const total = activeQuestions.length;
+  const percent = Math.round((correctCount / total) * 100);
+  const passed = percent >= 80;
+
+  const circle = document.getElementById('score-circle');
+  circle.className = 'score-circle ' + (passed ? 'pass' : 'fail');
+  document.getElementById('score-percent').textContent = percent + '%';
+
+  const msg = document.getElementById('result-msg');
+  if (passed) {
+    msg.innerHTML = '🎉 Честито! Успешно положен тест по Модул 7!';
+    msg.style.color = 'var(--success)';
+  } else {
+    msg.innerHTML = '⚠️ Резултатът е под 80% (необходими са минимум 16 верни отговора).';
+    msg.style.color = 'var(--danger)';
+  }
+
+  document.getElementById('stat-correct').textContent = correctCount + '/' + total;
+  document.getElementById('stat-wrong').textContent = (total - correctCount) + '/' + total;
+}
+
+function restartQuiz() {
+  currentIndex = 0;
+  userAnswers = {};
+  document.getElementById('results-card').style.display = 'none';
+  document.getElementById('quiz-card').style.display = 'block';
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+</body>
+</html>
